@@ -33,9 +33,7 @@ def make_tweet(text, time, lat, lon):
 
 def tweet_words(tweet):
     """Return a list of the words in the text of a tweet."""
-    text = tweet['text']
-    words = text.split()
-    return words
+    return extract_words(tweet['text'])
 
 def tweet_time(tweet):
     """Return the datetime that represents when the tweet was posted."""
@@ -135,7 +133,7 @@ def analyze_tweet_sentiment(tweet):
     False
     """
     average = make_sentiment(None)
-    words = extract_words(tweet['text'])
+    words = tweet_words(tweet)
     score = 0; qty = 0
     lock = False
     for x in words:
