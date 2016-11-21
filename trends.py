@@ -287,13 +287,13 @@ def group_tweets_by_state(tweets):
     >>> tweet_string(ca_tweets[0])
     '"Welcome to San Francisco" @ (38, -122)'
     """
+    us_centers = {n: find_center(s) for n, s in us_states.items()}
     tweets_by_state = {}
 
     for y in us_states:
         tweets_by_state[y] = []
         
     for x in tweets:
-        us_centers = {n: find_center(s) for n, s in us_states.items()}
         closest_state = find_closest_state(x, us_centers)
         tweets_by_state[closest_state].append(x)
 
