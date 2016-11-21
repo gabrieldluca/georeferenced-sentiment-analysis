@@ -59,10 +59,10 @@ def extract_words(text):
     >>> extract_words("paperclips! they're so awesome, cool, & useful!")
     ['paperclips', 'they', 're', 'so', 'awesome', 'cool', 'useful']
     """
-    caracteres = string.ascii_letters
+    characters = string.ascii_letters
     clean_up = ""
     for x in text:
-        if x in caracteres:
+        if x in characters:
             clean_up += x
         else:
             clean_up += " "
