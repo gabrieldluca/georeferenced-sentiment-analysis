@@ -12,3 +12,5 @@ The map displayed above depicts how the people in different states feel about Be
 The complete description of the project can be found in `project.pdf` file.
 
 **Special acknowledgment:** Aditi Muralidharan, who developed this project with John DeNero; Hamilton Nguyen, who extended it; Fernando Castor, who parcially translated the specification to brazilian portuguese. 
+
+**DISCLAIMER:** If you're having problems with `all_tweets.txt` file, please [click here](http://nifty.stanford.edu/2013/denero-muralidharan-trends/data/all_tweets.txt) and download it manually.
