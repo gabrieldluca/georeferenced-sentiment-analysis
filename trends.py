@@ -7,7 +7,6 @@ from geo import us_states, geo_distance, make_position, longitude, latitude
 from maps import draw_state, draw_name, draw_dot, wait, message
 from string import ascii_letters
 from ucb import main, trace, interact, log_current_line
-import string
 import doctest
 
 # Phase 1: The Feelings in Tweets
@@ -59,10 +58,9 @@ def extract_words(text):
     >>> extract_words("paperclips! they're so awesome, cool, & useful!")
     ['paperclips', 'they', 're', 'so', 'awesome', 'cool', 'useful']
     """
-    characters = string.ascii_letters
     clean_up = ""
     for x in text:
-        if x in characters:
+        if x in ascii_letters:
             clean_up += x
         else:
             clean_up += " "
@@ -135,14 +133,13 @@ def analyze_tweet_sentiment(tweet):
     average = make_sentiment(None)
     words = tweet_words(tweet)
     score = 0; qty = 0
-    lock = False
     for x in words:
         if has_sentiment(get_word_sentiment(x)):
             word_score = get_word_sentiment(x)
             score += word_score
-            qty += 1; lock = True
+            qty += 1
 
-    if lock == True:
+    if qty > 0:
         average = score/qty
         return average
     else:
@@ -171,16 +168,12 @@ def find_centroid(polygon):
     >>> find_centroid([p1, p2, p1])
     (1, 2, 0)
     """
-    all_lat = []; all_lon = []
-    for x in polygon:
-        all_lat.append(latitude(x))
-        all_lon.append(longitude(x))
+    all_lat = [latitude(x) for x in polygon]
+    all_lon = [longitude(x) for x in polygon]
 
     i = 0; area_tot = 0
-    while 1 > 0:
+    while i < len(polygon)-1:
         area_tot += (all_lat[i]*all_lon[i+1]) - (all_lat[i+1]*all_lon[i])
-        if i == len(polygon)-2:
-            break
         i += 1
 
     area = area_tot/2
@@ -189,11 +182,9 @@ def find_centroid(polygon):
     else:
         n = 0
         lat_tot = 0; lon_tot = 0
-        while 1 > 0:
+        while n < len(polygon)-1:
             lat_tot += (all_lat[n] + all_lat[n+1]) * ((all_lat[n]*all_lon[n+1]) - (all_lat[n+1]*all_lon[n]))
             lon_tot += (all_lon[n] + all_lon[n+1]) * ((all_lat[n]*all_lon[n+1]) - (all_lat[n+1]*all_lon[n]))
-            if n == len(polygon)-2:
-                break
             n += 1
 
         lat_centroid = lat_tot/(6*area)
@@ -201,8 +192,6 @@ def find_centroid(polygon):
 
         return (lat_centroid, lon_centroid, abs(area))
     
-    
-
 def find_center(polygons):
     """Compute the geographic center of a state, averaged over its polygons.
 
@@ -258,20 +247,8 @@ def find_closest_state(tweet, state_centers):
     >>> find_closest_state(ny, us_centers)
     'NJ'
     """
-    tweet_position = tweet_location(tweet)
-    lock = False
-    for x in state_centers:
-        distance = geo_distance(tweet_position, state_centers[x])
-        if lock == False:
-            shortest_distance = distance
-            closest_state = x
-            lock = True
-        else:
-            if distance < shortest_distance:
-                shortest_distance = distance
-                closest_state = x
-
-    return closest_state
+    tweet_pos = tweet_location(tweet)
+    return sorted([[geo_distance(tweet_pos, state_centers[s]),s] for s in state_centers])[0][1]
 
 def group_tweets_by_state(tweets):
     """Return a dictionary that aggregates tweets by their nearest state center.
@@ -288,10 +265,7 @@ def group_tweets_by_state(tweets):
     '"Welcome to San Francisco" @ (38, -122)'
     """
     us_centers = {n: find_center(s) for n, s in us_states.items()}
-    tweets_by_state = {}
-
-    for y in us_states:
-        tweets_by_state[y] = []
+    tweets_by_state = {y:[] for y in us_states}
         
     for x in tweets:
         closest_state = find_closest_state(x, us_centers)
@@ -317,7 +291,6 @@ def most_talkative_state(term):
             state = x
 
     return state
-    
 
 def average_sentiments(tweets_by_state):
     """Calculate the average sentiment of the states by averaging over all
@@ -332,17 +305,15 @@ def average_sentiments(tweets_by_state):
     tweets_by_state -- A dictionary from state names to lists of tweets
     """
     averaged_state_sentiments = {}
-    for x in tweets_by_state:
-        lock = False
+    for s in tweets_by_state:
         score = 0
         qty = 0
-        for y in tweets_by_state[x]:
-            if has_sentiment(analyze_tweet_sentiment(y)) != 0:
-                score += analyze_tweet_sentiment(y)
-                qty += 1
-                lock = True
-        if lock == True:
-            averaged_state_sentiments[x] = score/qty
+        for t in tweets_by_state[s]:
+            if has_sentiment(analyze_tweet_sentiment(t)) != 0:
+                score += analyze_tweet_sentiment(t)
+                qty += 1          
+        if qty > 0:
+            averaged_state_sentiments[s] = score/qty
             
     return averaged_state_sentiments
 
@@ -363,16 +334,10 @@ def group_tweets_by_hour(tweets):
 
     tweets -- A list of tweets to be grouped
     """
-    tweets_by_hour = {}
-    for x in range(24):
-        tweets_by_hour[x] = []
-        
-    for y in tweets:
-        datetime_str = tweet_time(y)
-        if datetime_str != None:
-            all_strings = datetime_str.timetuple()
-            hour = all_strings[3]
-            tweets_by_hour[hour].append(y)
+    tweets_by_hour = {h:[] for h in range(24)}
+    
+    for t in tweets:
+        tweets_by_hour[t['time'].hour].append(t)
 
     return tweets_by_hour
 
@@ -475,4 +440,3 @@ def run(*args):
     for name, execute in args.__dict__.items():
         if name != 'text' and execute:
             globals()[name](' '.join(args.text))
-
