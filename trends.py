@@ -84,11 +84,8 @@ def make_sentiment(value):
 
 def has_sentiment(s):
     """Return whether sentiment s has a value."""
-    if s != None:
-        if s >= -1 and s <= 1:
-            return True
-        else:
-            return False
+    if (s != None) and (s >= -1 and s <= 1):
+        return True
     else:
         return False
 
@@ -130,7 +127,6 @@ def analyze_tweet_sentiment(tweet):
     >>> has_sentiment(analyze_tweet_sentiment(no_sentiment))
     False
     """
-    average = make_sentiment(None)
     words = tweet_words(tweet)
     score = 0; qty = 0
     for x in words:
@@ -140,10 +136,9 @@ def analyze_tweet_sentiment(tweet):
             qty += 1
 
     if qty > 0:
-        average = score/qty
-        return average
+        return score/qty #average
     else:
-        return average
+        return make_sentiment(None)
 
 
 # Phase 2: The Geometry of Maps
@@ -170,7 +165,6 @@ def find_centroid(polygon):
     """
     all_lat = [latitude(x) for x in polygon]
     all_lon = [longitude(x) for x in polygon]
-
     i = 0; area_tot = 0
     while i < len(polygon)-1:
         area_tot += (all_lat[i]*all_lon[i+1]) - (all_lat[i+1]*all_lon[i])
@@ -189,7 +183,6 @@ def find_centroid(polygon):
 
         lat_centroid = lat_tot/(6*area)
         lon_centroid = lon_tot/(6*area)
-
         return (lat_centroid, lon_centroid, abs(area))
     
 def find_center(polygons):
@@ -266,7 +259,6 @@ def group_tweets_by_state(tweets):
     """
     us_centers = {n: find_center(s) for n, s in us_states.items()}
     tweets_by_state = {y:[] for y in us_states}
-        
     for x in tweets:
         closest_state = find_closest_state(x, us_centers)
         tweets_by_state[closest_state].append(x)
@@ -327,8 +319,7 @@ def group_tweets_by_hour(tweets):
 
     tweets -- A list of tweets to be grouped
     """
-    tweets_by_hour = {h:[] for h in range(24)}
-    
+    tweets_by_hour = {h:[] for h in range(24)}    
     for t in tweets:
         tweets_by_hour[t['time'].hour].append(t)
 
