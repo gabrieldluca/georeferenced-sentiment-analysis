@@ -216,7 +216,6 @@ def find_center(polygons):
 
     center_lat = all_lat / sum_area
     center_lon = all_lon / sum_area
-    
     return (center_lat, center_lon)
 
 
