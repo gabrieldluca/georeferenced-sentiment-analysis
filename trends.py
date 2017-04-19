@@ -281,16 +281,9 @@ def most_talkative_state(term):
     >>> most_talkative_state('my life')
     'CA'
     """
-    tweets = load_tweets(make_tweet, term)  # A list of tweets containing term
-    tweets_by_state = group_tweets_by_state(tweets)
-    highest = 0
-
-    for x in tweets_by_state:
-        if len(tweets_by_state[x]) > highest:
-            highest = len(tweets_by_state[x])
-            state = x
-
-    return state
+    #load_tweets(make_tweet, term) --> A list of tweets containing term
+    tweets = group_tweets_by_state(load_tweets(make_tweet, term))
+    return sorted([(len(tweets[x]),x) for x in tweets])[-1][1]
 
 def average_sentiments(tweets_by_state):
     """Calculate the average sentiment of the states by averaging over all
