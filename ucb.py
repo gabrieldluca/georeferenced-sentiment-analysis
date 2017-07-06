@@ -1,5 +1,3 @@
-"""The ucb module contains functions specific to 61A at UC Berkeley."""
-
 import code
 import functools
 import inspect
@@ -7,6 +5,9 @@ import re
 import signal
 import sys
 
+# Functions specific to 61A at UC Berkeley.
+
+PREFIX = ''
         
 def main(fn):
     """Call fn with command line arguments.  Used as a decorator.
@@ -23,8 +24,6 @@ def main(fn):
         args = sys.argv[1:] # Discard the script name from command line
         fn(*args) # Call the main function
 
-
-PREFIX = ''
 def trace(fn):
     """A decorator that prints a function's name, its arguments, and its return
     values each time the function is called. For example,
@@ -52,22 +51,20 @@ def trace(fn):
         return result
     return wrapped
 
-
 def log(message):
     """Print an indented message (used with trace)."""
     if type(message) is not str:
         message = str(message)
     print(PREFIX + re.sub('\n', '\n' + PREFIX, message))
 
-
 def log_current_line():
     """Print information about the current line of code."""
     frame = inspect.stack()[1]
     log('Current line: File "{f[1]}", line {f[2]}, in {f[3]}'.format(f=frame))
 
-
 def interact(msg=None):
-    """Start an interactive interpreter session in the current environment.
+    """
+    Start an interactive interpreter session in the current environment.
 
     On Unix:
       <Control>-D exits the interactive session and returns to normal execution.
@@ -75,17 +72,17 @@ def interact(msg=None):
       <Control>-Z <Enter> exists the interactive session and returns to normal
       execution.
     """
-    # use exception trick to pick up the current frame
+    # Exception trick to pick up the current frame
     try:
         raise None
     except:
         frame = sys.exc_info()[2].tb_frame.f_back
 
-    # evaluate commands in current namespace
+    # Evaluate commands in current namespace
     namespace = frame.f_globals.copy()
     namespace.update(frame.f_locals)
     
-    # exit on interrupt
+    # Exit on interrupt
     def handler(signum, frame):
         print()
         exit(0)
