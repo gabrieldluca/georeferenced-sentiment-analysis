@@ -1,8 +1,8 @@
-"""Geography and projection utilities."""
-
 from data import DATA_PATH
 from math import sin, cos, atan2, radians, sqrt
 from json import JSONDecoder
+
+# Geography and projection utilities.
 
 def make_position(lat, lon):
     """Return a geographic position, which has a latitude and longitude."""
@@ -17,16 +17,17 @@ def longitude(position):
     return position[1]
 
 def geo_distance(position1, position2):
-    """Return the great circle distance (in miles) between two
-    geographic positions.
+    """
+    Return the great circle distance (in miles) between two geographic
+    positions. Uses the Haversine formula.
 
-    Uses the "haversine" formula.
-    http://en.wikipedia.org/wiki/Haversine_formula
+    MORE INFO:
+        http://en.wikipedia.org/wiki/Haversine_formula
 
     >>> round(geo_distance(make_position(50, 5), make_position(58, 3)), 1)
     559.2
     """
-    earth_radius = 3963.2  # miles
+    earth_radius = 3963.2  # In miles
     lat1, lat2 = [radians(latitude(p)) for p in (position1, position2)]
     lon1, lon2 = [radians(longitude(p)) for p in (position1, position2)]
     dlat, dlon = lat2-lat1, lon2-lon1
@@ -46,16 +47,19 @@ def position_to_xy(position):
         return _lower48(position)
 
 def albers_projection(origin, parallels, translate, scale):
-    """Return an Albers projection from geographic positions to x-y positions.
+    """
+    Returns an Albers projection from geographic positions to x-y positions.
+    Derived from Mike Bostock's Albers javascript implementation for D3.
 
-    Derived from Mike Bostock's Albers javascript implementation for D3
-    http://mbostock.github.com/d3
-    http://mathworld.wolfram.com/AlbersEqual-AreaConicProjection.html
+    MORE INFO:
+        http://mbostock.github.com/d3
+        http://mathworld.wolfram.com/AlbersEqual-AreaConicProjection.html
 
-    origin -- a geographic position
-    parallels -- bounding latitudes
-    translate -- x-y translation to place the projection within a larger map
-    scale -- scaling factor
+    ARGUMENTS:
+        origin - a geographic position;
+        parallels - bounding latitudes;
+        translate - x-y translation to place the projection within a larger map;
+        scale - scaling factor;
     """
     phi1, phi2 = [radians(p) for p in parallels]
     base_lat = radians(latitude(origin))
@@ -74,13 +78,10 @@ def albers_projection(origin, parallels, translate, scale):
         return (x, y)
     return project
 
-_lower48 = albers_projection(make_position(38, -98), [29.5, 45.5], [480,250], 1000)
-_alaska = albers_projection(make_position(60, -160), [55,65], [150,440], 400)
-_hawaii = albers_projection(make_position(20, -160), [8,18], [300,450], 1000)
-
 def load_states():
-    """Load the coordinates of all the state outlines and return them
-    in a dictionary, from names to shapes lists.
+    """
+    Load the coordinates of all the state outlines and return them in a
+    dictionary, from names to shapes lists.
 
     >>> len(load_states()['HI'])  # Hawaii has 5 islands
     5
@@ -89,10 +90,13 @@ def load_states():
     states = JSONDecoder().decode(json_data_file.read())
     for state, shapes in states.items():
         for index, shape in enumerate(shapes):
-            if type(shape[0][0]) == list:  # the shape is a single polygon
+            if type(shape[0][0]) == list:  # The shape is a single polygon
                 assert len(shape) == 1, 'Multi-polygon shape'
                 shape = shape[0]
             shapes[index] = [make_position(*reversed(pos)) for pos in shape]
     return states
 
+_lower48 = albers_projection(make_position(38, -98), [29.5, 45.5], [480,250], 1000)
+_alaska = albers_projection(make_position(60, -160), [55,65], [150,440], 400)
+_hawaii = albers_projection(make_position(20, -160), [8,18], [300,450], 1000)
 us_states = load_states()
