@@ -1,5 +1,3 @@
-"""Functions for reading data from the sentiment dictionary and tweet files."""
-
 import os
 import re
 import string
@@ -7,16 +5,19 @@ import sys
 from datetime import datetime
 from ucb import main, interact
 
-# Look for data directory
+# Functions for reading data from the sentiment dictionary and tweet files.
+
 PY_PATH = sys.argv[0]
 if PY_PATH.endswith('doctest.py') and len(sys.argv) > 1:
     PY_PATH = sys.argv[1]
+    
 DATA_PATH = os.path.join(os.path.dirname(PY_PATH), 'data') + os.sep
 if not os.path.exists(DATA_PATH):
     DATA_PATH = 'data' + os.sep
 
 def load_sentiments(file_name=DATA_PATH + "sentiments.csv"):
-    """Read the sentiment file and return a dictionary containing the sentiment
+    """
+    Read the sentiment file and return a dictionary containing the sentiment
     score of each word, a value from -1 to +1.
     """
     sentiments = {}
@@ -25,8 +26,6 @@ def load_sentiments(file_name=DATA_PATH + "sentiments.csv"):
         sentiments[word] = float(score.strip())
     return sentiments
 
-word_sentiments = load_sentiments()
-
 def file_name_for_term(term):
     """Return a valid filename that corresponds to an arbitrary term string."""
     valid_characters = '-_' + string.ascii_letters + string.digits
@@ -34,7 +33,8 @@ def file_name_for_term(term):
     return ''.join(c for c in no_space if c in valid_characters) + '.txt'
 
 def generate_filtered_file(unfiltered_name, term):
-    """Return the path to a file containing tweets that match term, generating
+    """
+    Return the path to a file containing tweets that match term, generating
     that file if necessary.
     """
     filtered_path = DATA_PATH + file_name_for_term(term)
@@ -50,13 +50,15 @@ def generate_filtered_file(unfiltered_name, term):
     return filtered_path
 
 def load_tweets(make_tweet, term='my job', file_name='all_tweets.txt'):
-    """Return the list of tweets in file_name that contain term.
+    """
+    Return the list of tweets in file_name that contain term.
 
-    make_tweet -- a constructor that takes four arguments:
-      - a string containing the words in the tweet
-      - a datetime.datetime object representing the time of the tweet
-      - a longitude coordinate
-      - a latitude coordinate
+    ARGUMENTS:
+        make_tweet - a constructor that takes four arguments:
+          ~ a string containing the words in the tweet
+          ~ a datetime.datetime object representing the time of the tweet
+          ~ a longitude coordinate
+          ~ a latitude coordinate
     """
     term = term.lower()
     filtered_path = generate_filtered_file(file_name, term)
@@ -69,3 +71,5 @@ def load_tweets(make_tweet, term='my job', file_name='all_tweets.txt'):
             tweet = make_tweet(text.lower(), time, lat, lon)
             tweets.append(tweet)
     return tweets
+
+word_sentiments = load_sentiments()
