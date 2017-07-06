@@ -55,10 +55,10 @@ def load_tweets(make_tweet, term='my job', file_name='all_tweets.txt'):
 
     ARGUMENTS:
         make_tweet - a constructor that takes four arguments:
-          ~ a string containing the words in the tweet
-          ~ a datetime.datetime object representing the time of the tweet
-          ~ a longitude coordinate
-          ~ a latitude coordinate
+          ~ a string containing the words in the tweet;
+          ~ a datetime.datetime object representing the time of the tweet;
+          ~ a longitude coordinate;
+          ~ a latitude coordinate;
     """
     term = term.lower()
     filtered_path = generate_filtered_file(file_name, term)
