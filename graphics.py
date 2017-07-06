@@ -1,7 +1,7 @@
-"""The graphics module implements a simple GUI library."""
-
 import sys
 import math
+
+# The graphics module implements a simple GUI library.
 
 try:
     import tkinter
@@ -55,9 +55,11 @@ class Canvas(object):
         self._canvas.update()
 
     def draw_polygon(self, points, color='Black', fill_color=None, filled=1, smooth=0, width=1):
-        """Draw a polygon and return its tkinter id.
+        """
+        Draw a polygon and return its tkinter id.
 
-        points -- a list of (x, y) pairs encoding pixel positions
+        ARGUMENTS:
+            points - a list of (x, y) pairs encoding pixel positions;
         """
         if fill_color == None:
             fill_color = color
@@ -67,9 +69,11 @@ class Canvas(object):
                 smooth=smooth, width=width)
 
     def draw_circle(self, center, radius, color='Black', fill_color=None, filled=1, width=1):
-        """Draw a cirlce and return its tkinter id.
+        """
+        Draw a cirlce and return its tkinter id.
 
-        center -- an (x, y) pair encoding a pixel position
+        ARGUMENTS:
+            center - an (x, y) pair encoding a pixel position;
         """
         if fill_color == None:
             fill_color = color
@@ -134,14 +138,16 @@ class Canvas(object):
         self.animate_shape(id, duration, points_fn)
 
     def wait_for_click(self, seconds=0):
-        """Return (position, elapsed) pair of click position and elapsed time.
-
-        position: (x,y) pixel position of click
-        elapsed:  milliseconds elapsed since call
-        seconds:  maximum number of seconds to wait for a click
-
+        """
+        Returns (position, elapsed) pair of click position and elapsed time.
         If there is still no click after the given time, return (None, seconds).
 
+        MORE INFO:
+            position - (x,y) pixel position of click;
+            elapsed - milliseconds elapsed since call;
+        
+        ARGUMENTS:
+            seconds - maximum number of seconds to wait for a click;
         """
         elapsed = 0
         while elapsed < seconds or seconds == 0:
@@ -203,8 +209,10 @@ def rectangle_points(pos, width, height):
     return [(x1, y1), (x1, y2), (x2, y2), (x2, y1)]
 
 def format_color(r, g, b):
-    """Format a color as a string.
+    """
+    Format a color as a string.
 
-    r, g, b -- integers from 0 to 255
+    ARGUMENTS:
+        r, g, b - integers from 0 to 255;
     """
     return '#{0:02x}{1:02x}{2:02x}'.format(int(r * 255), int(g * 255), int(b * 255))
