@@ -1,19 +1,19 @@
-"""Map drawing utilities for U.S. sentiment data."""
-
 from graphics import Canvas
 from geo import position_to_xy, us_states
 
-# A fixed gradient of sentiment colors from negative (blue) to positive (red)
-# Colors chosen via Cynthia Brewer's Color Brewer (colorbrewer2.com)
+# Map drawing utilities for U.S. sentiment data
+
 SENTIMENT_COLORS = ["#313695", "#4575B4", "#74ADD1", "#ABD9E9", "#E0F3F8",
                     "#FFFFFF", "#FEE090", "#FDAE61", "#F46D43", "#D73027",
                     "#A50026"]
 GRAY = "#AAAAAA"
 
 def get_sentiment_color(sentiment, sentiment_scale=4):
-    """Returns a color corresponding to the sentiment value.
+    """
+    Returns a color corresponding to the sentiment value.
 
-    sentiment -- a number between -1 (negative) and +1 (positive)
+    ARGUMENTS:
+        sentiment - a number between -1 (negative) and +1 (positive);
     """
     if sentiment is None:
         return GRAY
@@ -26,11 +26,15 @@ def get_sentiment_color(sentiment, sentiment_scale=4):
     return SENTIMENT_COLORS[index]
 
 def draw_state(shapes, sentiment_value=None):
-    """Draw the named state in the given color on the canvas.
+    """
+    Draw the named state in the given color on the canvas.
 
-    state -- a list of list of polygons (which are lists of positions)
-    sentiment_value -- a number between -1 (negative) and 1 (positive)
-    canvas -- the graphics.Canvas object
+    INFO:
+        canvas - the graphics.Canvas object;
+
+    ARGUMENTS:
+        shapes - a list of list of polygons (which are lists of positions);
+        sentiment_value - a number between -1 (negative) and 1 (positive);
     """
     for polygon in shapes:
         vertices = [position_to_xy(position) for position in polygon]
@@ -38,18 +42,22 @@ def draw_state(shapes, sentiment_value=None):
         get_canvas().draw_polygon(vertices, fill_color=color)
 
 def draw_name(name, location):
-    """Draw the two-letter postal code at the center of the state.
+    """
+    Draw the two-letter postal code at the center of the state.
 
-    location -- a position
+    ARGUMENTS:
+        location - a position;
     """
     center = position_to_xy(location)
     get_canvas().draw_text(name.upper(), center, anchor='center', style='bold')
 
 def draw_dot(location, sentiment_value=None, radius=3):
-    """Draw a small dot at location.
+    """
+    Draw a small dot at location.
 
-    location -- a position
-    sentiment_value -- a number between -1 (negative) and 1 (positive)
+    ARGUMENTS:
+        location - a position;
+        sentiment_value - a number between -1 (negative) and 1 (positive);
     """
     center = position_to_xy(location)
     color = get_sentiment_color(sentiment_value)
